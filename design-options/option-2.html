@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nice Out — Option 2: Departure board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@400;600;800&family=Familjen+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+  :root{
+    --bg:#1B1915; --panel:#24211C; --line:#3A352D; --text:#EEE7D7; --dim:#B3AA98;
+    --accent:#F2B13A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Familjen Grotesk',sans-serif;font-size:16px;line-height:1.5}
+  .wrap{max-width:1100px;margin:0 auto;padding:18px 16px 48px}
+  header{display:flex;justify-content:space-between;align-items:center;font-family:'Martian Mono',monospace;font-size:12px;color:var(--dim);padding-bottom:14px;border-bottom:1px solid var(--line)}
+  header b{color:var(--text);font-weight:800;font-size:14px;letter-spacing:.02em}
+  .grid{display:grid;gap:28px;margin-top:24px}
+  @media(min-width:900px){.grid{grid-template-columns:1fr 1fr;gap:48px}}
+  .now{font-family:'Martian Mono',monospace;font-size:12px;color:var(--dim);margin-bottom:10px}
+  .answer{font-family:'Martian Mono',monospace;font-weight:800;font-size:clamp(40px,12vw,76px);line-height:1.05;letter-spacing:-.04em;color:var(--accent)}
+  .answer span{display:block;color:var(--text);font-size:.42em;font-weight:600;letter-spacing:0;margin-bottom:6px}
+  .sub{margin-top:16px;font-size:18px;color:var(--text);max-width:30ch}
+  .sub b{color:var(--accent)}
+  .reasons{margin-top:20px;display:grid;gap:10px}
+  .reasons div{display:flex;gap:10px;align-items:flex-start;color:var(--dim);font-size:16px}
+  .reasons i{color:var(--text);font-size:20px;margin-top:1px}
+  .board{background:var(--panel);border:1px solid var(--line)}
+  .row{display:grid;grid-template-columns:64px 1fr 64px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);font-family:'Martian Mono',monospace;font-size:13px}
+  .row:last-child{border-bottom:0}
+  .row .t{color:var(--dim)}
+  .row .bar{height:10px;background:var(--line);position:relative}
+  .row .bar i{position:absolute;inset:0 auto 0 0;background:var(--text);opacity:.55}
+  .row.go .bar i{background:var(--accent);opacity:1}
+  .row .pc{text-align:right}
+  .row.go .pc{color:var(--accent);font-weight:800}
+  .head{font-family:'Martian Mono',monospace;font-size:12px;color:var(--dim);display:flex;justify-content:space-between;padding:0 2px 8px}
+  .log{margin-top:28px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  button{font:inherit;font-weight:700;background:transparent;color:var(--text);border:1px solid var(--line);padding:16px 6px;display:flex;flex-direction:column;gap:6px;align-items:center;cursor:pointer}
+  button i{font-size:22px}
+  button:hover{border-color:var(--accent);color:var(--accent)}
+  .tally{margin-top:14px;font-family:'Martian Mono',monospace;font-size:12px;color:var(--dim)}
+  .tally b{color:var(--text)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><b>NICE OUT</b><span>KOTHRUD, PUNE · TUE 06 OCT · 05:12</span></header>
+  <div class="grid">
+    <section>
+      <div class="now">NEXT GOOD WINDOW</div>
+      <div class="answer"><span>Go out</span>06:10–07:20</div>
+      <p class="sub"><b>84%</b> chance you'll like it. Learned from 23 of your outings.</p>
+      <div class="reasons">
+        <div><i class="ph ph-thermometer-simple"></i>Feels like 24°, before the heat builds</div>
+        <div><i class="ph ph-wind"></i>PM2.5 at 18, lowest of the day</div>
+        <div><i class="ph ph-drop"></i>Sticky after 09:00 (humidity 78%)</div>
+      </div>
+      <div class="log">
+        <button><i class="ph ph-sun"></i>Great</button>
+        <button><i class="ph ph-cloud-sun"></i>Fine</button>
+        <button><i class="ph ph-cloud-rain"></i>Bad</button>
+      </div>
+      <p class="tally">CALLED RIGHT <b>19/23</b> · PLAIN HEAT RULE <b>13/23</b></p>
+    </section>
+    <section>
+      <div class="head"><span>HOUR</span><span>CHANCE YOU'LL LIKE IT</span></div>
+      <div class="board" id="board"></div>
+    </section>
+  </div>
+</div>
+<script>
+const p=[.3,.84,.8,.55,.3,.15,.08,.05,.05,.06,.1,.25,.48,.62,.5,.35];
+const b=document.getElementById('board');
+p.forEach((v,i)=>{const hr=5+i;const r=document.createElement('div');r.className='row'+(v>.6?' go':'');
+r.innerHTML=`<span class="t">${String(hr).padStart(2,'0')}:00</span><span class="bar"><i style="width:${v*100}%"></i></span><span class="pc">${Math.round(v*100)}%</span>`;b.appendChild(r)});
+</script>
+</body>
+</html>

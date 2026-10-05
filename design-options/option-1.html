@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nice Out — Option 1: Almanac</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+  :root{
+    --paper:#E6EAE3; --paper-2:#D9DED5; --ink:#1A1F1A; --ink-2:#434A42; --rule:#BCC4B8;
+    --accent:#A8381F;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);font-family:Manrope,sans-serif;font-size:16px;line-height:1.45}
+  .wrap{max-width:1080px;margin:0 auto;padding:20px 16px 48px;display:grid;gap:32px}
+  @media(min-width:900px){.wrap{grid-template-columns:1.15fr .85fr;padding:48px 40px;gap:56px;align-items:start}}
+  header{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:10px;grid-column:1/-1}
+  .brand{font-family:'Young Serif',serif;font-weight:800;font-size:22px;letter-spacing:-.01em}
+  .place{font-size:14px;color:var(--ink-2);display:flex;gap:6px;align-items:center}
+  .kicker{font-size:13px;color:var(--ink-2);text-transform:none;margin-bottom:6px}
+  h1{font-family:'Young Serif',serif;font-weight:400;font-size:clamp(44px,11vw,88px);line-height:1.02;letter-spacing:-.025em}
+  h1 em{font-style:normal;color:var(--accent)}
+  .odds{margin-top:14px;font-size:18px;line-height:1.6}
+  .odds b{font-family:'Young Serif',serif;font-size:28px}
+  .why{margin-top:22px;border-top:1px solid var(--rule)}
+  .why li{list-style:none;display:grid;grid-template-columns:28px 1fr;padding:12px 0;border-bottom:1px solid var(--rule);font-size:16px}
+  .why i{font-size:20px;color:var(--ink-2);margin-top:1px}
+  .table{margin-top:28px}
+  .table h2,.side h2{font-family:'Young Serif',serif;font-weight:600;font-size:22px;margin-bottom:10px}
+  .hours{display:grid;grid-template-columns:repeat(12,1fr);gap:0;border:1px solid var(--ink)}
+  .h{border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:6px 0 4px;text-align:center;font-size:11px;color:var(--ink-2)}
+  .h:nth-child(12n){border-right:0}
+  .h .sq{height:28px;margin:4px 4px 3px;background:var(--ink);opacity:.08}
+  .h.best .sq{background:var(--accent);opacity:1}
+  .h .t{font-variant-numeric:tabular-nums}
+  .legend{display:flex;gap:16px;font-size:12px;color:var(--ink-2);margin-top:8px}
+  .legend span::before{content:"";display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px;background:var(--ink);opacity:.5}
+  .legend .a::before{background:var(--accent);opacity:1}
+  .side{display:grid;gap:28px}
+  .log{background:var(--paper-2);padding:18px}
+  .log p{font-size:15px;color:var(--ink-2);margin-bottom:12px}
+  .btns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  button{font:inherit;font-weight:700;border:1.5px solid var(--ink);background:transparent;color:var(--ink);padding:14px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:15px}
+  button i{font-size:22px}
+  button:hover{background:var(--ink);color:var(--paper)}
+  .score{border-top:2px solid var(--ink);padding-top:12px}
+  .big{font-family:'Young Serif',serif;font-size:64px;font-weight:400;line-height:1.05;letter-spacing:-.03em}
+  .big small{font-size:22px;font-weight:400;color:var(--ink-2)}
+  .score p{color:var(--ink-2);font-size:15px;margin-top:6px}
+  .ask{display:flex;gap:8px;border-bottom:1.5px solid var(--ink);padding:8px 0;align-items:center;color:var(--ink-2)}
+  .ask i{font-size:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><div class="brand">Nice Out</div><div class="place"><i class="ph ph-map-pin"></i>Kothrud, Pune · Tue 6 Oct</div></header>
+  <main>
+    <div class="kicker">Your next good window</div>
+    <h1>Go out<br><em>6:10–7:20</em> am</h1>
+    <p class="odds"><b>84%</b> chance you'll enjoy it, based on 23 of your outings.</p>
+    <ul class="why">
+      <li><i class="ph ph-thermometer-simple"></i><span>Feels like 24°, before the heat builds</span></li>
+      <li><i class="ph ph-wind"></i><span>PM2.5 at 18, lowest of the day</span></li>
+      <li><i class="ph ph-drop"></i><span>After 9 am it gets sticky (humidity 78%)</span></li>
+    </ul>
+    <section class="table">
+      <h2>Next 24 hours</h2>
+      <div class="hours" id="hours"></div>
+      <div class="legend"><span class="a">Likely nice for you</span><span>Darker = more likely</span></div>
+    </section>
+  </main>
+  <aside class="side">
+    <div class="log">
+      <h2>Back from outside?</h2>
+      <p>One tap. Every outing teaches it a little more about you.</p>
+      <div class="btns">
+        <button><i class="ph ph-sun"></i>Great</button>
+        <button><i class="ph ph-cloud-sun"></i>Fine</button>
+        <button><i class="ph ph-cloud-rain"></i>Bad</button>
+      </div>
+    </div>
+    <div class="score">
+      <div class="big">19<small> of 23</small></div>
+      <p>outings it called right. A plain "feels like under 30°" rule got 13.</p>
+    </div>
+    <div class="ask"><i class="ph ph-chat-circle-text"></i>Ask: when can I run an hour this weekend?</div>
+  </aside>
+</div>
+<script>
+const p=[.2,.15,.1,.1,.12,.3,.84,.8,.55,.3,.15,.08,.05,.05,.06,.1,.25,.48,.62,.5,.35,.25,.2,.18];
+const el=document.getElementById('hours');
+p.forEach((v,i)=>{const hr=i;const d=document.createElement('div');d.className='h'+(v>.6?' best':'');
+d.innerHTML=`<div class="sq" style="${v>.6?'':'opacity:'+(0.08+v*.8)}"></div><div class="t">${String(hr).padStart(2,'0')}</div>`;el.appendChild(d)});
+</script>
+</body>
+</html>

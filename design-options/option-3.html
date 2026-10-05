@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nice Out — Option 3: Trail marker</title>
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+  :root{
+    --bg:#F1F2EC; --ink:#141A15; --ink-2:#424B43; --rule:#C9CEC3;
+    --accent:#1F6B3A; --accent-ink:#F1F2EC;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:Satoshi,sans-serif;font-size:16px;line-height:1.5}
+  .wrap{max-width:1180px;margin:0 auto;padding:16px 16px 48px}
+  header{display:flex;justify-content:space-between;align-items:center;padding:6px 0 18px}
+  .brand{font-family:'Clash Display',sans-serif;font-weight:700;font-size:20px;display:flex;gap:8px;align-items:center}
+  .brand i{color:var(--accent);font-size:22px}
+  .place{font-size:14px;color:var(--ink-2)}
+  .hero{display:grid;gap:20px}
+  @media(min-width:900px){.hero{grid-template-columns:7fr 5fr;gap:48px;align-items:end}}
+  .marker{background:var(--accent);color:var(--accent-ink);padding:22px 20px 26px;position:relative}
+  .marker small{font-size:14px;font-weight:500;opacity:.9}
+  .marker .time{font-family:'Clash Display',sans-serif;font-weight:600;font-size:clamp(64px,20vw,152px);line-height:1;letter-spacing:-.035em;margin-top:6px}
+  .marker .to{font-family:'Clash Display',sans-serif;font-weight:500;font-size:clamp(22px,6vw,40px);line-height:1.2}
+  .marker .odds{margin-top:14px;font-size:17px;font-weight:500}
+  .why{display:grid;gap:0;border-top:2px solid var(--ink)}
+  .why div{display:grid;grid-template-columns:30px 1fr;padding:12px 0;border-bottom:1px solid var(--rule)}
+  .why i{font-size:20px;color:var(--ink-2);margin-top:2px}
+  .chart{margin-top:36px}
+  .chart h2{font-family:'Clash Display',sans-serif;font-weight:600;font-size:22px;margin-bottom:14px}
+  .bars{display:grid;grid-template-columns:repeat(24,1fr);gap:3px;align-items:end;height:120px;border-bottom:2px solid var(--ink)}
+  .bars div{background:var(--ink);opacity:.18}
+  .bars div.go{background:var(--accent);opacity:1}
+  .ticks{display:grid;grid-template-columns:repeat(24,1fr);gap:3px;font-size:11px;color:var(--ink-2);margin-top:6px}
+  .ticks span:nth-child(3n+2),.ticks span:nth-child(3n+3){visibility:hidden}
+  .lower{display:grid;gap:28px;margin-top:36px}
+  @media(min-width:900px){.lower{grid-template-columns:1fr 1fr;gap:48px}}
+  .lower h3{font-family:'Clash Display',sans-serif;font-weight:600;font-size:20px;margin-bottom:10px}
+  .btns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  button{font:inherit;font-weight:700;background:transparent;border:2px solid var(--ink);color:var(--ink);padding:14px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+  button i{font-size:22px}
+  button:hover{background:var(--ink);color:var(--bg)}
+  .score{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline}
+  .score .n{font-family:'Clash Display',sans-serif;font-weight:600;font-size:72px;line-height:1}
+  .score p{color:var(--ink-2);max-width:26ch}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><div class="brand"><i class="ph-fill ph-signpost"></i>Nice Out</div><div class="place">Kothrud, Pune · Tue 6 Oct</div></header>
+  <section class="hero">
+    <div class="marker">
+      <small>Go out at</small>
+      <div class="time">6:10</div>
+      <div class="to">until 7:20 am</div>
+      <p class="odds">84% chance you'll enjoy it · learned from 23 outings</p>
+    </div>
+    <div class="why">
+      <div><i class="ph ph-thermometer-simple"></i><span>Feels like 24°, before the heat builds</span></div>
+      <div><i class="ph ph-wind"></i><span>PM2.5 at 18, lowest of the day</span></div>
+      <div><i class="ph ph-drop"></i><span>After 9 am it gets sticky (humidity 78%)</span></div>
+    </div>
+  </section>
+  <section class="chart">
+    <h2>Rest of today, for you</h2>
+    <div class="bars" id="bars"></div>
+    <div class="ticks" id="ticks"></div>
+  </section>
+  <section class="lower">
+    <div>
+      <h3>Back from outside?</h3>
+      <div class="btns">
+        <button><i class="ph ph-sun"></i>Great</button>
+        <button><i class="ph ph-cloud-sun"></i>Fine</button>
+        <button><i class="ph ph-cloud-rain"></i>Bad</button>
+      </div>
+    </div>
+    <div class="score"><span class="n">19/23</span><p>outings called right. A plain "feels like under 30°" rule got 13.</p></div>
+  </section>
+</div>
+<script>
+const p=[.2,.15,.1,.1,.12,.3,.84,.8,.55,.3,.15,.08,.05,.05,.06,.1,.25,.48,.62,.5,.35,.25,.2,.18];
+const b=document.getElementById('bars'),t=document.getElementById('ticks');
+p.forEach((v,i)=>{const d=document.createElement('div');d.style.height=(8+v*100)+'%';if(v>.6)d.className='go';b.appendChild(d);
+const s=document.createElement('span');s.textContent=String(i).padStart(2,'0');t.appendChild(s)});
+</script>
+</body>
+</html>
