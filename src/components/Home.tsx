@@ -158,16 +158,25 @@ function Hero({ o }: { o: Outlook }) {
         <p className="odds">{Math.round(w.p * 100)}% chance you’ll enjoy it · {learned}</p>
       </>
     );
-  } else {
+  } else if (o.best) {
+    // Nothing clears 60%, but still point at a time: the app's job is to get you out.
     const b = o.best;
+    const start = clock(b.ts, tz);
+    const day = dayLabel(b.ts, tz);
+    head = (
+      <>
+        <small>Nothing great in the next 36 hours. Best bet{day === "Today" ? "" : `, ${day.toLowerCase()}`}:</small>
+        <div className="time">{start.time}<span className="ampm">{start.ampm}</span></div>
+        <div className="to">for an hour, feels like {Math.round(b.feels)}°</div>
+        <p className="odds">{Math.round(b.p * 100)}% chance you’ll enjoy it · {learned}</p>
+      </>
+    );
+  } else {
     head = (
       <>
         <small>Next 36 hours</small>
-        <div className="time time-sm">Stay in</div>
-        <div className="to">
-          {b ? `Least bad: ${hourLabel(b.ts, tz)} ${dayLabel(b.ts, tz).toLowerCase()}, ${Math.round(b.p * 100)}%` : "No forecast yet"}
-        </div>
-        <p className="odds">Nothing looks good for you · {learned}</p>
+        <div className="time time-sm">No forecast</div>
+        <p className="odds">Weather data didn’t load. Try again in a minute.</p>
       </>
     );
   }

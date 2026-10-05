@@ -213,7 +213,7 @@ export async function getOutlook(person: Person): Promise<Outlook> {
     window: all[0] ?? null,
     later: all.slice(1, 4),
     best,
-    reasons: reasonsFor(all[0] ?? null, hours, person.tz),
+    reasons: reasonsFor(all[0] ?? (best && windows([{ ...best, p: 1 }])[0]) ?? null, hours, person.tz),
     score,
   };
 }
