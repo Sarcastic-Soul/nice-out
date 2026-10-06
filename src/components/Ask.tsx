@@ -22,7 +22,8 @@ export function Ask({ id }: { id: string }) {
     setBusy(true);
     try {
       const r = await api<{ text: string }>("/api/chat", { method: "POST", body: JSON.stringify({ id, message }) });
-      setMsgs((m) => [...m, { role: "guide", text: r.text }]);
+      // Plain text only: drop any markdown emphasis the model slips in.
+      setMsgs((m) => [...m, { role: "guide", text: r.text.replace(/\*\*|__|`/g, "") }]);
     } catch (e) {
       setMsgs((m) => [...m, { role: "guide", text: (e as Error).message }]);
     } finally {
