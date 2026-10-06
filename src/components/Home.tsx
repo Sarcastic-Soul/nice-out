@@ -303,7 +303,7 @@ function ScoreBlock({ o }: { o: Outlook }) {
     <div className="score">
       <span className="n">{s.model_right}/{s.total}</span>
       <p>
-        {s.kind === "outings" ? "real outings called right before you went." : "of your ratings called right when held out of training."}{" "}
+        real outings called right before you went.{" "}
         A generic &ldquo;feels like 16–30°, dry, clean air&rdquo; rule got {s.rule_right}.
       </p>
     </div>

@@ -16,7 +16,7 @@ export type Rating = { ts: string; source: string; verdict: string; liked: numbe
 export type HourOut = Hour & { p: number; hour_local: number; awake: boolean };
 export type Window = { start: string; end: string; p: number; hours: number };
 export type Score = {
-  kind: "outings" | "holdout";
+  kind: "outings";
   model_right: number;
   rule_right: number;
   total: number;
@@ -101,43 +101,17 @@ function reasonsFor(w: Window | null, hours: HourOut[], tz: string): string[] {
   return out.slice(0, 3);
 }
 
-// Check how well it knows you, without spending many tokens:
-// 1. If you've logged real outings that had a prediction beforehand, score those (honest, free).
-// 2. Otherwise do a 2-fold holdout on your ratings (2 TabPFN calls, cached per rating count).
-async function computeScore(ratings: Rating[]): Promise<Score | null> {
+// How well it knows you: real outings that had a prediction shown beforehand,
+// compared with the generic rule. A holdout on a dozen quick-start answers
+// trains on too few rows to mean much, so we wait for real outings.
+function computeScore(ratings: Rating[]): Score | null {
   const judged = ratings.filter((r) => r.source === "outing" && r.predicted !== null);
-  if (judged.length >= 5) {
-    return {
-      kind: "outings",
-      total: judged.length,
-      model_right: judged.filter((r) => (r.predicted! >= 0.5 ? 1 : 0) === r.liked).length,
-      rule_right: judged.filter((r) => (ruleLikes(r.features) ? 1 : 0) === r.liked).length,
-    };
-  }
-  if (ratings.length < 10) return null;
-  const a = ratings.filter((_, i) => i % 2 === 0);
-  const b = ratings.filter((_, i) => i % 2 === 1);
-  if (!hasBothClasses(a) || !hasBothClasses(b)) return null;
-  const right = await Promise.all(
-    [
-      [a, b],
-      [b, a],
-    ].map(async ([train, test]) => {
-      const p = await predictProba(
-        [...COLUMNS],
-        train.map((r) => row(r.features)),
-        train.map((r) => r.liked),
-        test.map((r) => row(r.features)),
-      );
-      return test.filter((r, i) => (p[i] >= 0.5 ? 1 : 0) === r.liked).length;
-    }),
-  );
-  const model = right[0] + right[1];
+  if (judged.length < 5) return null;
   return {
-    kind: "holdout",
-    total: ratings.length,
-    model_right: model,
-    rule_right: ratings.filter((r) => (ruleLikes(r.features) ? 1 : 0) === r.liked).length,
+    kind: "outings",
+    total: judged.length,
+    model_right: judged.filter((r) => (r.predicted! >= 0.5 ? 1 : 0) === r.liked).length,
+    rule_right: judged.filter((r) => (ruleLikes(r.features) ? 1 : 0) === r.liked).length,
   };
 }
 
@@ -166,22 +140,13 @@ export async function getOutlook(person: Person): Promise<Outlook> {
       probs = upcoming.map((h) => byTs.get(h.ts) ?? 0);
       score = cached.check_score;
     } else {
-      // Reuse the last score if the ratings haven't changed; it only moves when you rate.
-      const [prev] = await q<{ check_score: Score | null }>(
-        `SELECT check_score FROM outlooks WHERE person_id = $1 AND n_ratings = $2 AND check_score IS NOT NULL
-         ORDER BY created_at DESC LIMIT 1`,
-        [person.id, n],
+      probs = await predictProba(
+        [...COLUMNS],
+        ratings.map((r) => row(r.features)),
+        ratings.map((r) => r.liked),
+        upcoming.map((h) => row(toFeatures(h, person.tz))),
       );
-      // The forecast and the score check are independent TabPFN calls, so run them together.
-      [probs, score] = await Promise.all([
-        predictProba(
-          [...COLUMNS],
-          ratings.map((r) => row(r.features)),
-          ratings.map((r) => r.liked),
-          upcoming.map((h) => row(toFeatures(h, person.tz))),
-        ),
-        prev ? Promise.resolve(prev.check_score) : computeScore(ratings).catch(() => null),
-      ]);
+      score = computeScore(ratings);
       await q(
         `INSERT INTO outlooks (person_id, hour_key, n_ratings, hours, check_score) VALUES ($1, $2, $3, $4, $5)
          ON CONFLICT DO NOTHING`,

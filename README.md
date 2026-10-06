@@ -12,7 +12,7 @@ Built for the [Hacktoberfest 2026 Open-Source AI Challenge, Week 1](https://dev.
 - **Next window.** TabPFN gives each upcoming hour a chance that you'll enjoy it. Hours at 60% or more form windows. Night hours (10 pm to 5 am) are never suggested.
 - **Reasons in plain words.** "Feels like 25°", "PM2.5 at 18, about the cleanest air of the day", "From 9 am it feels like 31°".
 - **Log an outing.** Great, Fine or Bad, with when you were out. The app also stores the chance it showed for that hour *before* you went, so its score is honest.
-- **How well it knows you.** Once you've logged 5 real outings, it shows how many it called right, next to a generic "feels like 16–30°, dry, clean air" rule. Before that, it runs a 2-fold holdout on your quick-start ratings.
+- **How well it knows you.** Once you've logged 5 real outings, it shows how many it called right, next to a generic "feels like 16–30°, dry, clean air" rule. A holdout on a dozen quick-start answers trains on too few rows to mean much, so it waits for real outings.
 - **Ask about a plan.** A [Mastra](https://mastra.ai) agent on an open-weight model (`openai/gpt-oss-120b` on Groq) answers things like "when can I do a 1-hour run tomorrow?" using your personal forecast, your history, and a tool to log outings. It remembers lasting facts about you (favourite activity, usual length) in working memory.
 
 ## How it works
